@@ -2,6 +2,7 @@ from bson import ObjectId
 from fastapi import HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from pydantic import ValidationError
+from src.ml_models.model_class import predict_shark_attack_probability_value
 from src.models.shark_attacks import SharkAttacks, UpdateSharkAttacks
 
 
@@ -22,7 +23,7 @@ def update_shark_attack(request: Request, id: str, shark_attack: UpdateSharkAtta
     shark_attack = {k: v for k, v in shark_attack.dict().items() if v is not None}
     if len(shark_attack) >= 1:
         update_result = get_collection_shark_attacks(request).update_one(
-            {"id": ObjectId(id)}, {"$set": shark_attack}
+            {"_id": id}, {"$set": shark_attack}
         )
 
         if update_result.modified_count == 0:
@@ -32,7 +33,7 @@ def update_shark_attack(request: Request, id: str, shark_attack: UpdateSharkAtta
 
     if (
         existing_shark_attack := get_collection_shark_attacks(request).find_one(
-            {"id": ObjectId(id)}
+            {"_id": id}
         )
     ) is not None:
         return existing_shark_attack
@@ -49,7 +50,7 @@ def list_shark_attacks(request: Request, limit=int):
 
 def list_shark_attacks_by_id(request: Request, id: str):
     if shark_attack := get_collection_shark_attacks(request).find_one(
-        {"id": ObjectId(id)}
+        {"_id": id}
     ):
         return shark_attack
     raise HTTPException(
@@ -84,7 +85,7 @@ def list_shark_attacks_by_type(request: Request, author: str):
 
 def delete_shark_attack(request: Request, id: str):
     deleted_shark_attack = get_collection_shark_attacks(request).delete_one(
-        {"id": ObjectId(id)}
+        {"_id": id}
     )
 
     if deleted_shark_attack.deleted_count == 1:
@@ -95,7 +96,7 @@ def delete_shark_attack(request: Request, id: str):
     )
 
 
-def delete_invalid_shark_attacks(request: Request, limit=100):
+def delete_invalid_shark_attacks(request: Request, limit=5000):
     collection = get_collection_shark_attacks(request).find(limit=limit)
     try:
         invalid_count = 0
@@ -119,3 +120,10 @@ def delete_invalid_shark_attacks(request: Request, limit=100):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+def predict_shark_attack_probability(shark_attack: SharkAttacks):
+    shark_attack = jsonable_encoder(shark_attack)
+    probability = predict_shark_attack_probability_value(shark_attack)
+    
+    message = f"Probability of a shark attack occuring in {shark_attack['country']} in {shark_attack["month"]} while doing the following activity {shark_attack["month"]} is: {float(probability):0.4f}%"
+    return message
