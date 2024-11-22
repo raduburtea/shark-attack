@@ -1,9 +1,10 @@
+import pandas as pd
 from bson import ObjectId
 from fastapi import HTTPException, Request, status
 from fastapi.encoders import jsonable_encoder
 from pydantic import ValidationError
 from src.ml_models.model_class import predict_shark_attack_probability_value
-from src.models.shark_attacks import SharkAttacks, UpdateSharkAttacks
+from src.models.shark_attacks import SharkAttackPred, SharkAttacks, UpdateSharkAttacks
 
 
 def get_collection_shark_attacks(request: Request):
@@ -95,7 +96,6 @@ def delete_shark_attack(request: Request, id: str):
         status_code=status.HTTP_404_NOT_FOUND, detail=f"Shark attack not found!"
     )
 
-
 def delete_invalid_shark_attacks(request: Request, limit=5000):
     collection = get_collection_shark_attacks(request).find(limit=limit)
     try:
@@ -121,9 +121,18 @@ def delete_invalid_shark_attacks(request: Request, limit=5000):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-def predict_shark_attack_probability(shark_attack: SharkAttacks):
+def predict_shark_attack_probability(shark_attack: SharkAttackPred):
     shark_attack = jsonable_encoder(shark_attack)
     probability = predict_shark_attack_probability_value(shark_attack)
     
     message = f"Probability of a shark attack occuring in {shark_attack['country']} in {shark_attack["month"]} while doing the following activity {shark_attack["month"]} is: {float(probability):0.4f}%"
     return message
+
+def total_attacks_by_attribute(request: Request, attribute):
+    attribute = jsonable_encoder(attribute)['attribute']
+    df = pd.DataFrame(list(get_collection_shark_attacks(request).find()), columns=['month', 'country', 'activity', 'injuries', 'type', 'year', 'occurence_per_month'])
+    try:
+        aggregated = df.groupby(attribute.lower())['occurence_per_month'].sum().reset_index()
+    except KeyError:
+        raise HTTPException(status_code=400, detail=f"Attribute {attribute} not found in dataset")
+    return aggregated.to_dict()

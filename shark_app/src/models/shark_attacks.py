@@ -1,7 +1,7 @@
 import json
 import pickle
 import uuid
-from typing import Optional
+from typing import Literal, Optional, Union
 
 from bson import ObjectId
 from dotenv import dotenv_values
@@ -11,6 +11,10 @@ config = dotenv_values(".env")
 
 
 class SharkAttackPred(BaseModel):
+    """
+    Model for data used for prediction only
+    """
+
     month: str
     country: str
     activity: str
@@ -58,6 +62,10 @@ class SharkAttackPred(BaseModel):
 
 
 class SharkAttacks(SharkAttackPred):
+    """
+    Model used for adding and retrieving data from the database
+    """
+
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     month: str
     country: str
@@ -100,5 +108,21 @@ class UpdateSharkAttacks(BaseModel):
                 "type": "Unprovoked",
                 "year": 1998,
                 "occurence_per_month": 0.5,
+            }
+        }
+
+
+class AttributePred(BaseModel):
+    """
+    Model just for aggregating data
+    """
+
+    attribute: Union[Literal["Country", "Activity", "Type", "Year"]]
+
+    class Config:
+        allow_population_by_field_name = True
+        schema_extra = {
+            "example": {
+                "attribute": "Country",
             }
         }

@@ -2,7 +2,12 @@ from typing import List
 
 import src.rules.shark_attacks as shark_attacks
 from fastapi import APIRouter, Request, status
-from src.models.shark_attacks import SharkAttacks, UpdateSharkAttacks, SharkAttackPred
+from src.models.shark_attacks import (
+    AttributePred,
+    SharkAttackPred,
+    SharkAttacks,
+    UpdateSharkAttacks,
+)
 
 router = APIRouter(
     prefix="/shark_attacks",
@@ -76,10 +81,17 @@ def list_shark_attacks_by_type(request: Request, type: str):
 def delete_shark_attack(request: Request, id: str):
     return shark_attacks.delete_shark_attack(request, id)
 
+
 @router.delete("/")
 def cleanup_invalid_formats(request: Request):
     return shark_attacks.delete_invalid_shark_attacks(request, 5000)
 
-@router.put("/")
+
+@router.post("/predict", response_description="Predict shark attack probability")
 def predict_attack_probability(shark_attack: SharkAttackPred):
     return shark_attacks.predict_shark_attack_probability(shark_attack)
+
+
+@router.post("/aggregate", response_description="Get aggregated data for an attribute")
+def get_aggregated_data(request: Request, attribute: AttributePred):
+    return shark_attacks.total_attacks_by_attribute(request, attribute)

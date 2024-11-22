@@ -1,20 +1,16 @@
 import json
 import pickle
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from dotenv import dotenv_values
-from fastapi.encoders import jsonable_encoder
 from sklearn.ensemble import AdaBoostRegressor
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-from sklearn.model_selection import GridSearchCV
 from sklearn.tree import DecisionTreeRegressor
 
 config = dotenv_values(".env")
 
-with open("src/ml_models/trained_adaboost.pkl", "rb") as file:
+with open("src/ml_models/trained_adaboost2.pkl", "rb") as file:
     shark_probability_model = pickle.load(file)
 
 
@@ -81,34 +77,3 @@ class SharkAttackRatePredictor:
         Make predictions for new data
         """
         return self.model.predict(new_data)
-
-    def evaluate(self, X_test, y_test):
-        """
-        Evaluate model performance
-        """
-        y_pred = self.model.predict(X_test)
-        mse = mean_squared_error(y_test, y_pred)
-        mae = mean_absolute_error(y_test, y_pred)
-        r2 = r2_score(y_test, y_pred)
-
-        return {"mse": mse, "rmse": np.sqrt(mse), "r2": r2, "mae": mae}
-
-    def plot_feature_importance(self):
-        """
-        Plot feature importance (for AdaBoost)
-        """
-        if isinstance(self.model, AdaBoostRegressor):
-            importance = pd.DataFrame(
-                {
-                    "feature": self.feature_names,
-                    "importance": self.model.feature_importances_,
-                }
-            )
-            importance = importance.sort_values("importance", ascending=False)
-
-            plt.figure(figsize=(10, 6))
-            plt.bar(importance["feature"][:15], importance["importance"][:15])
-            plt.xticks(rotation=45, ha="right")
-            plt.title("Feature Importance")
-            plt.tight_layout()
-            plt.show()
