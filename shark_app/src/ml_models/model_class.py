@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeRegressor
 
 config = dotenv_values(".env")
 
-with open("src/ml_models/trained_adaboost2.pkl", "rb") as file:
+with open("src/ml_models/trained_adaboost.pkl", "rb") as file:
     shark_probability_model = pickle.load(file)
 
 

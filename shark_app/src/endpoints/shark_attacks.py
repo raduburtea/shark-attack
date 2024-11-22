@@ -84,7 +84,7 @@ def delete_shark_attack(request: Request, id: str):
 
 @router.delete("/")
 def cleanup_invalid_formats(request: Request):
-    return shark_attacks.delete_invalid_shark_attacks(request, 5000)
+    return shark_attacks.delete_invalid_shark_attacks(request)
 
 
 @router.post("/predict", response_description="Predict shark attack probability")

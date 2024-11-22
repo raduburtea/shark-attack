@@ -96,8 +96,8 @@ def delete_shark_attack(request: Request, id: str):
         status_code=status.HTTP_404_NOT_FOUND, detail=f"Shark attack not found!"
     )
 
-def delete_invalid_shark_attacks(request: Request, limit=5000):
-    collection = get_collection_shark_attacks(request).find(limit=limit)
+def delete_invalid_shark_attacks(request: Request):
+    collection = get_collection_shark_attacks(request).find()
     try:
         invalid_count = 0
         valid_count = 0
