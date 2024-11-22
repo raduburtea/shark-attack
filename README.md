@@ -1,5 +1,46 @@
 <h1 align='center'> Shark Attack CRUD App </h1>
 
+## Folder Structure
+```
+├── shark_app
+│   │── .env
+│   ├── src
+│   │    ├── __init__.py
+│   │    ├── rules
+│   │    │      ├── __init__.py
+│   │    │      └── shark_attack.py
+│   │    │
+│   │    ├── endpoints
+│   │    │      ├── __init__.py
+│   │    │      └── shark_attack.py
+│   │    │
+│   │    ├── models
+│   │    │      ├── __init__.py
+│   │    │      └── shark_attack.py   
+│   │    │
+│   │    ├── ml_models
+│   │    │      ├── __init__.py
+│   │    │      ├── trained_adaboost.pkl
+│   │    │      └── model_class.py  
+│   │    │
+│   ├── routes
+│   │    ├── __init__.py
+│   │    └── api.py
+│   ├── __init__.py
+│   └── main.py
+```
+### Folders
+
+`rules` - implementation of functionality
+
+`endpoints` - definition of endpoints and calls to corresponding `rules`
+
+`ml_models` - loading of models and class definition
+
+`routes` - routes will be defined for each one of the object we are working with, potential for scaling it
+
+`models` - definition of data objects along with validations
+
 ## Running the API
 
 1. Clone the repository
