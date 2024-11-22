@@ -8,12 +8,14 @@ config = dotenv_values(".env")
 
 
 class SharkAttacks(BaseModel):
-    id: str = Field(default_factory=uuid.uuid4, alias="_id")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4), alias="_id")
     month: str
     country: str
     activity: str
     injuries: str
     type: str
+    year: int
+    occurence_per_month: float
 
     @validator("country")
     def country_must_be_in_countries(cls, country):
@@ -30,6 +32,8 @@ class SharkAttacks(BaseModel):
                 "activity": "Swimming",
                 "injuries": "Lasceration",
                 "type": "Unprovoked",
+                "year": 1998,
+                "occurence_per_month": 0.5,
             }
         }
 
@@ -50,5 +54,7 @@ class UpdateSharkAttacks(BaseModel):
                 "activity": "Swimming",
                 "injuries": "Lasceration",
                 "type": "Unprovoked",
+                "year": 1998,
+                "occurence_per_month": 0.5,
             }
         }
