@@ -19,7 +19,7 @@ bin/activate
 pip install -r requirements.txt
 ```
 
-5. CD into shark_app directory 
+5. CD into `shark_app` directory 
 
 6. Run the API with uvicorn
 
@@ -27,7 +27,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-The message "Project connected to the MongoDB database!" muts appear if everything is right. From this point, one can use the Swagger documentation to test the API and MongoDB Compass to visualize the collections and documents. 
+The message `"Project connected to the MongoDB database!"` muts appear if everything is right. From this point, one can use the Swagger documentation to test the API and MongoDB Compass to visualize the collections and documents. 
 
 The code used to upload to MongoDB is in `requests_to_app.ipynb`
 
@@ -40,6 +40,8 @@ In order to run it you can use the same virtual environment as for the other tas
 The data used for training is in `shark_data_cleaned.csv`.
 
 The data uploaded to MongoDB is in `shark_data_cleaned_with_year.csv`.
+
+The folder `inter_openai` contains checkpoints from the results from prompting the LLM as it was prone to faults.
 
 <h1 align='center'> Frontend Task </h1>
 
